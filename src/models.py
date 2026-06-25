@@ -1,5 +1,5 @@
 class Opportunity:
-    def __init__(self, title, company, location, deadline, sector, description, link, source):
+    def __init__(self, title, company, location, deadline, sector, description, link, source):      
         self.title = title
         self.company = company
         self.location = location
@@ -22,6 +22,18 @@ class Opportunity:
         }
 
 
+job = Opportunity(
+    "Software Internship",
+    "ABC Ltd",                      
+    "London",
+    "2026-07-15",
+    "Technology",
+    "Help build websites and apps",
+    "https://example.com",
+    "Company Careers Page"
+)
 
+print(job.title)
+print(job.to_dict())
 
 
