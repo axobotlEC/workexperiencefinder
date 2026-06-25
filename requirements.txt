@@ -1,0 +1,11 @@
+streamlit
+requests
+beautifulsoup4
+pandas
+python-dotenv
+
+later may need:
+scikit-learn
+sentence-transformers
+playwright
+scrapy
