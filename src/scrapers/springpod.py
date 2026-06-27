@@ -216,59 +216,6 @@ def scrape_springpod() -> List[dict]:
                         company = cand
             except Exception:
                 pass
- re.I))
-        if date_node:
-            parent = date_node.parent
-            text = parent.get_text(" ", strip=True)
-            m = re.search(r"Date[:]?\s*(.+)", text, re.I)
-            if m:
-                deadline = clean_text(m.group(1))
-
-        if not deadline:
-            time_tag = doc.find("time")
-            if time_tag and time_tag.get("datetime"):
-                deadline = time_tag.get("datetime")
-            elif time_tag:
-                deadline = clean_text(time_tag.get_text(" ", strip=True))
-
-        location = ""
-        loc = doc.find(lambda t: t.name in ("p", "div") and "location" in t.get_text(" ", "").lower())
-        if loc:
-            location = clean_text(loc.get_text(" ", strip=True))
-
-        # Try to find company/organiser info
-        company = "Springpod"
-        whole_text = doc.get_text(" ", strip=True)
-        if re.search(r"\bonline\b|ONLINE EVENT|ONLINE event", whole_text):
-            location = "Online"
-        if re.search(r"(Provider|Company|Host|Organiser|Hosted by)[:]?", whole_text, re.I):
-            org = doc.find(text=re.compile(r"(Provider|Company|Host|Organiser|Hosted by)[:]?", re.I))
-            if org:
-                parent = org.parent
-                text = parent.get_text(" ", strip=True)
-                mm = re.search(r"(?:Provider|Company|Host|Organiser|Hosted by)[:\s]*(.+)", text, re.I)
-                if mm:
-                    company = clean_text(mm.group(1))
-        else:
-            if title and ":" in title:
-                part = title.split(":", 1)[1]
-                candidate = part.split(",")[0].split("-")[0].strip()
-                if len(candidate) > 0 and any(c.isalpha() for c in candidate):
-                    company = clean_text(candidate)
-
-        # fallback: derive company from URL slug when still generic
-        if company in ("Springpod", ""):
-            try:
-                from urllib.parse import urlparse
-                parts = [p for p in urlparse(full).path.split('/') if p]
-                if parts:
-                    slug = parts[-1]
-                    cand = slug.replace('-', ' ').title()
-                    if cand:
-                        company = cand
-            except Exception:
-                pass
-
         detail = {
             "title": title,
             "company": company,

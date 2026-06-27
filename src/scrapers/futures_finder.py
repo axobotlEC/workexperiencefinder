@@ -180,7 +180,7 @@ def scrape_futures_finder() -> List[dict]:
 
         # date heuristics
         deadline = ""
-        date_node = doc.find(text=re.compile(r"\bDate\b[:]?", re.I))
+        date_node = doc.find(string=re.compile(r"\bDate\b[:]?", re.I))
         if date_node:
             parent = date_node.parent
             text = parent.get_text(" ", strip=True)
@@ -210,7 +210,7 @@ def scrape_futures_finder() -> List[dict]:
                     location = clean_text(mloc.group(1))
 
         # try to find organiser/company label
-        org = doc.find(text=re.compile(r"(Organiser|Provider|Company|Host|Hosted by)[:]?", re.I))
+        org = doc.find(string=re.compile(r"(Organiser|Provider|Company|Host|Hosted by)[:]?", re.I))
         if org:
             parent = org.parent
             text = parent.get_text(" ", strip=True)
