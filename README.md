@@ -16,16 +16,16 @@ if ($LASTEXITCODE -ne 0) { py --version 2>$null; if ($LASTEXITCODE -ne 0) { Writ
 & $python -m pip install --upgrade pip
 if (Test-Path requirements.txt) { & $python -m pip install -r requirements.txt }
 $src = Get-Content app.py -Raw
-if ($src -match 'streamlit') { & $python -m streamlit run app.py --server.port 8501 --server.address 0.0.0.0 }
-elseif ($src -match 'from\s+flask|import\s+flask|Flask\(') { $env:FLASK_APP='app.py'; & $python -m flask run --host 0.0.0.0 --port 5000 }
-elseif ($src -match 'FastAPI|from\s+fastapi|import\s+fastapi|uvicorn') { & $python -m uvicorn app:app --reload --host 0.0.0.0 --port 8000 }
+if ($src -match 'streamlit') { & $python -m streamlit run app.py }
+elseif ($src -match 'flask') { $env:FLASK_APP='app.py'; & $python -m flask run }
+elseif ($src -match 'fastapi|uvicorn') { & $python -m uvicorn app:app --reload }
 else { & $python app.py }
 
 Or this if on mac:
 
 python --version >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-  if command -v py >/dev/null 2>&1; then PY=py; else echo "Python not found" && exit 1; fi
+  if command -v py >/dev/null 2>&1; then PY=py; else echo "Python not found"; exit 1; fi
 else
   PY=python
 fi
@@ -34,12 +34,8 @@ $PY -m venv .venv
 $PY -m pip install --upgrade pip
 if [ -f requirements.txt ]; then $PY -m pip install -r requirements.txt; fi
 SRC=$(cat app.py)
-if echo "$SRC" | grep -q streamlit; then
-  $PY -m streamlit run app.py --server.port 8501 --server.address 0.0.0.0
-elif echo "$SRC" | grep -Eq 'from\s+flask|import\s+flask|Flask\('; then
-  FLASK_APP=app.py FLASK_ENV=development $PY -m flask run --host 0.0.0.0 --port 5000
-elif echo "$SRC" | grep -Eq 'FastAPI|from\s+fastapi|import\s+fastapi|uvicorn'; then
-  $PY -m uvicorn app:app --reload --host 0.0.0.0 --port 8000
-else
-  $PY app.py
+if echo "$SRC" | grep -q streamlit; then $PY -m streamlit run app.py
+elif echo "$SRC" | grep -q flask; then FLASK_APP=app.py $PY -m flask run
+elif echo "$SRC" | grep -Eq 'fastapi|uvicorn'; then $PY -m uvicorn app:app --reload
+else $PY app.py
 fi
