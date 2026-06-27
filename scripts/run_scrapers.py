@@ -1,11 +1,15 @@
-from src.database import init_db, save_opportunities
-from src.scrapers.example_site import scrape_site
-from src.categoriser.rules import categorise_opportunity
+"""Run available scrapers and save opportunities to the database."""
+from src.services.collect import collect_and_save
+from src.scrapers import SCRAPER_FUNCTIONS
 
-init_db()
-items = scrape_site()
 
-for item in items:
-    item = categorise_opportunity(item)
+def run_all():
+    processed = collect_and_save(SCRAPER_FUNCTIONS)
+    if processed:
+        print(f"Saved {len(processed)} opportunities.")
+    else:
+        print("No opportunities to save.")
 
-save_opportunities(items)
+
+if __name__ == "__main__":
+    run_all()

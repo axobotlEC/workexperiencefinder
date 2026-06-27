@@ -1,46 +1,37 @@
-from pathlib import Path
-import sys
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-from src.database import clear_opportunities, save_opportunities
+# scripts/seed_demo_data.py
 from src.models import Opportunity
+from src.database import save_opportunities, init_db
+from src.categoriser.rules import categorise_opportunity
 
-demo_items = [
-    Opportunity(
-        "Software Engineering Work Experience",
-        "Northstar Digital",
-        "London",
-        "2026-07-15",
-        "Technology",
-        "One-week placement supporting a small engineering team with web app tasks.",
-        "https://example.com/northstar-work-experience",
-        "Demo Seed",
-    ),
-    Opportunity(
-        "Hospitality Summer Placement",
-        "Riverside Hotel Group",
-        "Manchester",
-        "2026-08-01",
-        "Hospitality",
-        "Front-of-house and operations placement for students exploring customer service roles.",
-        "https://example.com/riverside-placement",
-        "Demo Seed",
-    ),
-    Opportunity(
-        "Healthcare Insight Day",
-        "City General Hospital",
-        "Birmingham",
-        "2026-07-22",
-        "Healthcare",
-        "A one-day programme introducing clinical and non-clinical career paths.",
-        "https://example.com/city-general-insight-day",
-        "Demo Seed",
-    ),
-]
+def seed():
+    init_db()
+    demo = [
+        Opportunity(
+            title="Intro to Data Science Placement",
+            company="Data4Good",
+            location="Manchester, UK",
+            deadline="2026-09-01",
+            sector="Data",
+            description="A short placement for students to learn data analysis.",
+            link="https://example.org/opps/data4good",
+            source="seed"
+        ),
+        Opportunity(
+            title="Engineering Work Experience",
+            company="BuildIt Ltd",
+            location="Bristol, UK",
+            deadline="2026-08-15",
+            sector="Engineering",
+            description="Hands-on placement for school students.",
+            link="https://example.org/opps/buildit",
+            source="seed"
+        ),
+    ]
+    # Ensure demo records are passed through the categorisation logic
+    # so fields like `sector` and `is_student_opportunity` are populated.
+    processed = [categorise_opportunity(d) for d in demo]
+    save_opportunities(processed)
+    print("Seeded demo data.")
 
-clear_opportunities()
-save_opportunities(demo_items)
-print(f"Seeded {len(demo_items)} opportunities.")
+if __name__ == "__main__":
+    seed()
