@@ -6,7 +6,14 @@ Please note that the crawler algorithm unfornutely is unfinshed so the wrong dat
 
 To run the software:
 1) Dowload it to vs code
-2) Open the terminal and type this if on windows:
+   open terminal
+   then copy this:
+
+   git clone https://github.com/axobotlEC/workexperiencefinder
+   cd workexperiencefinder
+   code .
+
+3) Open the terminal and type this if on windows:
 
 $python='python'
 python --version 2>$null
